@@ -658,23 +658,33 @@ public class MainActivity extends AppCompatActivity {
                     "Позицій: " + invoiceItems.size(),
                     Toast.LENGTH_LONG).show();
             // =======================
-            // Заголовок
-            // =======================
+// =======================
+// Шапка накладної
+// =======================
 
-            ws.value(0, 1, "НАКЛАДНА");
+            ws.value(0, 0, "Центр Комплектації Димарів");
+            ws.range(0,0,0,4)
+                    .style()
+                    .bold()
+                    .set();
 
-            ws.value(1, 1,
-                    "Дата: " +
-                            new SimpleDateFormat(
-                                    "dd.MM.yyyy HH:mm",
-                                    Locale.getDefault()
-                            ).format(new Date()));
+            ws.value(1, 0, "НАКЛАДНА № ____");
 
-            // =======================
-            // Шапка таблиці
-            // =======================
+            String date = new SimpleDateFormat(
+                    "dd.MM.yyyy",
+                    Locale.getDefault()
+            ).format(new Date());
 
-            int startRow = 3;
+            ws.value(2, 0, "Дата: " + date);
+            ws.value(2, 2, "Клієнт: __________________");
+
+
+// =======================
+// Шапка таблиці
+// =======================
+
+            int startRow = 4;
+            int row = startRow + 1;
 
             ws.value(startRow, 0, "№");
             ws.value(startRow, 1, "Найменування");
@@ -682,9 +692,23 @@ public class MainActivity extends AppCompatActivity {
             ws.value(startRow, 3, "Кіл-ть");
             ws.value(startRow, 4, "Сума");
 
+            ws.range(
+                            startRow,
+                            0,
+                            startRow,
+                            4
+                    )
+                    .style()
+                    .bold()
+                    .horizontalAlignment("center")
+                    .fillColor("D9EAF7")
+                    .borderStyle("thin")
+                    .set();
+
+
             double total = 0;
 
-            int row = startRow + 1;
+
 
             for (int i = 0; i < invoiceItems.size(); i++) {
 
@@ -713,18 +737,94 @@ public class MainActivity extends AppCompatActivity {
 
                 row++;
             }
-
-            // =======================
-            // Разом
             // =======================
 
-            ws.value(row, 1, "Разом");
+            // Центрирование колонок № и Кіл-ть
+
+            // =======================
+// Центрирование числовых колонок
+// №, Ціна, Кіл-ть, Сума
+// =======================
+
+            ws.range(
+                            startRow + 1,
+                            0,
+                            row - 1,
+                            0
+                    )
+                    .style()
+                    .horizontalAlignment("center")
+                    .set();
+
+
+            ws.range(
+                            startRow + 1,
+                            2,
+                            row - 1,
+                            2
+                    )
+                    .style()
+                    .horizontalAlignment("center")
+                    .set();
+
+
+            ws.range(
+                            startRow + 1,
+                            3,
+                            row - 1,
+                            3
+                    )
+                    .style()
+                    .horizontalAlignment("center")
+                    .set();
+
+
+            ws.range(
+                            startRow + 1,
+                            4,
+                            row - 1,
+                            4
+                    )
+                    .style()
+                    .horizontalAlignment("center")
+                    .set();
+
+            // Контур таблиці товарів
+// =======================
+
+            ws.range(
+                            startRow,
+                            0,
+                            row - 1,
+                            4
+                    )
+                    .style()
+                    .borderStyle("thin")
+                    .set();
+            // =======================
+// Разом
+// =======================
+
+            row++;
+
+            ws.value(row, 1, "Разом:");
             ws.value(row, 4,
                     String.format(Locale.US,
                             "%.2f грн",
                             total));
 
-            row++;
+            ws.range(
+                            row,
+                            1,
+                            row,
+                            4
+                    )
+                    .style()
+                    .bold()
+                    .borderStyle("thin")
+                    .set();
+
+
 
             // =======================
 // =======================
@@ -756,28 +856,48 @@ public class MainActivity extends AppCompatActivity {
                 row++;
 
                 ws.value(row, 0, "");
-                ws.value(row, 1, "Сума знижки");
+                ws.value(row, 1, "Сума знижки:");
                 ws.value(row, 2, "");
                 ws.value(row, 3, "");
                 ws.value(row, 4,
                         String.format(Locale.US, "%.2f грн", discountValue));
+                ws.range(
+                                row,
+                                1,
+                                row,
+                                4
+                        )
+                        .style()
+                        .bold()
+                        .borderStyle("thin")
+                        .set();
 
                 row++;
 
                 ws.value(row, 0, "");
-                ws.value(row, 1, "Разом зі знижкою");
+                ws.value(row, 1, "Разом зі знижкою:");
                 ws.value(row, 2, "");
                 ws.value(row, 3,
                         String.format(Locale.US, "%.0f%%", discount));
                 ws.value(row, 4,
                         String.format(Locale.US, "%.2f грн", result));
+                ws.range(
+                                row,
+                                1,
+                                row,
+                                4
+                        )
+                        .style()
+                        .bold()
+                        .borderStyle("thin")
+                        .set();
             }
             // =======================
             // Ширина колонок
             // =======================
 
             ws.width(0, 8);
-            ws.width(1, 50);
+            ws.width(1, 45);
             ws.width(2, 15);
             ws.width(3, 10);
             ws.width(4, 18);

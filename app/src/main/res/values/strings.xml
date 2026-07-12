@@ -83,7 +83,7 @@
     <string name="item_view_role_description">Tab</string>
     <string name="label_discount">Знижка(%):</string>
     <string name="label_total">Разом:</string>
-    <string name="label_total_with_discount">Разом зі зн-ой:</string>
+    <string name="label_total_with_discount">Зі зн-ой:</string>
     <string name="m3_exceed_max_badge_text_suffix">%1$s%2$s</string>
     <string name="m3_ref_typeface_brand_medium">sans-serif-medium</string>
     <string name="m3_ref_typeface_brand_regular">sans-serif</string>

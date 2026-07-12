@@ -154,7 +154,7 @@
                     android:paddingEnd="4dp"/>
                 <EditText
                     android:id="@+id/etDiscount"
-                    android:layout_width="45dp"
+                    android:layout_width="40dp"
                     android:layout_height="48dp"
                     android:textSize="14sp"
                     android:hint="@string/discount_hint"
