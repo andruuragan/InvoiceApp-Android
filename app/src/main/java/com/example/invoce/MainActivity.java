@@ -857,7 +857,11 @@ public class MainActivity extends AppCompatActivity {
                 row++;
 
                 ws.value(row, 1, "Разом зі знижкою:");
-                ws.value(row, 3, String.format(Locale.US, "%.0f%%", discount));
+                ws.formula(
+                        row,
+                        3,
+                        "AA" + resultExcelRow + "*100&\"%\""
+                );
 
                 ws.formula(
                         row,
