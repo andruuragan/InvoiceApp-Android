@@ -657,18 +657,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,
                     "Позицій: " + invoiceItems.size(),
                     Toast.LENGTH_LONG).show();
-            // =======================
-// =======================
-// Шапка накладної
-// =======================
 
-            ws.value(0, 0, "Центр Комплектації Димарів");
-            ws.range(0,0,0,4)
-                    .style()
-                    .bold()
-                    .set();
 
-            ws.value(1, 0, "НАКЛАДНА № ____");
+
+            ws.range(2, 0, 2, 1).merge();
 
             String date = new SimpleDateFormat(
                     "dd.MM.yyyy",
@@ -677,6 +669,8 @@ public class MainActivity extends AppCompatActivity {
 
             ws.value(2, 0, "Дата: " + date);
             ws.value(2, 2, "Клієнт: __________________");
+            ws.range(2, 2, 2, 3)
+                    .merge();
 
 
 // =======================
@@ -723,17 +717,14 @@ public class MainActivity extends AppCompatActivity {
                 ws.value(row, 0, i + 1);
                 ws.value(row, 1, product.displayNameLength());
 
-                ws.value(row, 2,
-                        String.format(Locale.US,
-                                "%.2f грн",
-                                product.getPrice()));
+                // Цена (число)
+                ws.value(row, 2, product.getPrice());
 
+                // Количество
                 ws.value(row, 3, item.getQuantity());
 
-                ws.value(row, 4,
-                        String.format(Locale.US,
-                                "%.2f грн",
-                                sum));
+                // Сумма (число)
+                ws.value(row, 4, sum);
 
                 row++;
             }
@@ -808,10 +799,7 @@ public class MainActivity extends AppCompatActivity {
             row++;
 
             ws.value(row, 1, "Разом:");
-            ws.value(row, 4,
-                    String.format(Locale.US,
-                            "%.2f грн",
-                            total));
+            ws.value(row, 4, total);
 
             ws.range(
                             row,
@@ -843,6 +831,8 @@ public class MainActivity extends AppCompatActivity {
 
             double discountValue = total * discount / 100.0;
             double result = total - discountValue;
+
+// Сообщение пользователю (оставляем грн)
             String message =
                     "Всього = " + String.format(Locale.US, "%.2f грн", total) +
                             "\nРазом зі знижкою = " + String.format(Locale.US, "%.2f грн", result);
@@ -851,22 +841,15 @@ public class MainActivity extends AppCompatActivity {
 
             if (discount > 0) {
 
-
-
                 row++;
 
                 ws.value(row, 0, "");
                 ws.value(row, 1, "Сума знижки:");
                 ws.value(row, 2, "");
                 ws.value(row, 3, "");
-                ws.value(row, 4,
-                        String.format(Locale.US, "%.2f грн", discountValue));
-                ws.range(
-                                row,
-                                1,
-                                row,
-                                4
-                        )
+                ws.value(row, 4, discountValue); // число
+
+                ws.range(row, 1, row, 4)
                         .style()
                         .bold()
                         .borderStyle("thin")
@@ -877,16 +860,17 @@ public class MainActivity extends AppCompatActivity {
                 ws.value(row, 0, "");
                 ws.value(row, 1, "Разом зі знижкою:");
                 ws.value(row, 2, "");
-                ws.value(row, 3,
-                        String.format(Locale.US, "%.0f%%", discount));
-                ws.value(row, 4,
-                        String.format(Locale.US, "%.2f грн", result));
-                ws.range(
-                                row,
-                                1,
-                                row,
-                                4
-                        )
+
+// Показываем пользователю процент
+                ws.value(row, 3, String.format(Locale.US, "%.0f%%", discount));
+
+// Итоговая сумма остается числом
+                ws.value(row, 4, result);
+
+// Скрытое числовое значение для формул, например в столбце Z (индекс 25)
+                ws.value(row, 26, discount / 100.0);
+
+                ws.range(row, 1, row, 4)
                         .style()
                         .bold()
                         .borderStyle("thin")
