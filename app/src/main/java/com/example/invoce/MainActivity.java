@@ -654,9 +654,7 @@ public class MainActivity extends AppCompatActivity {
             Workbook wb = new Workbook(fos, "InvoiceApp", "1.0");
             Worksheet ws = wb.newWorksheet("Накладна");
 
-            Toast.makeText(this,
-                    "Позицій: " + invoiceItems.size(),
-                    Toast.LENGTH_LONG).show();
+
 
 
 
@@ -700,7 +698,7 @@ public class MainActivity extends AppCompatActivity {
                     .set();
 
 
-            double total = 0;
+
 
 
 
@@ -710,24 +708,21 @@ public class MainActivity extends AppCompatActivity {
 
                 Product product = item.getProduct();
 
-                double sum = product.getPrice() * item.getQuantity();
-
-                total += sum;
-
                 ws.value(row, 0, i + 1);
                 ws.value(row, 1, product.displayNameLength());
 
-                // Цена (число)
                 ws.value(row, 2, product.getPrice());
-
-                // Количество
                 ws.value(row, 3, item.getQuantity());
 
-                // Сумма (число)
-                ws.value(row, 4, sum);
+                int excelRow = row + 1;
+
+// Формула: Ціна * Кіл-ть
+                ws.formula(row, 4, "C" + excelRow + "*D" + excelRow);
 
                 row++;
             }
+            int firstItemExcelRow = startRow + 2;
+            int lastItemExcelRow = row;
             // =======================
 
             // Центрирование колонок № и Кіл-ть
@@ -799,7 +794,13 @@ public class MainActivity extends AppCompatActivity {
             row++;
 
             ws.value(row, 1, "Разом:");
-            ws.value(row, 4, total);
+            int totalExcelRow = row + 1;
+
+            ws.formula(
+                    row,
+                    4,
+                    "SUM(E" + firstItemExcelRow + ":E" + lastItemExcelRow + ")"
+            );
 
             ws.range(
                             row,
@@ -811,6 +812,7 @@ public class MainActivity extends AppCompatActivity {
                     .bold()
                     .borderStyle("thin")
                     .set();
+
 
 
 
@@ -829,45 +831,40 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception ignored) {
             }
 
-            double discountValue = total * discount / 100.0;
-            double result = total - discountValue;
 
-// Сообщение пользователю (оставляем грн)
-            String message =
-                    "Всього = " + String.format(Locale.US, "%.2f грн", total) +
-                            "\nРазом зі знижкою = " + String.format(Locale.US, "%.2f грн", result);
-
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
             if (discount > 0) {
 
+                int discountExcelRow = row + 2;
+                int resultExcelRow = row + 3;
+
                 row++;
 
-                ws.value(row, 0, "");
                 ws.value(row, 1, "Сума знижки:");
-                ws.value(row, 2, "");
-                ws.value(row, 3, "");
-                ws.value(row, 4, discountValue); // число
 
+                ws.formula(
+                        row,
+                        4,
+                        "E" + totalExcelRow + "*AA" + resultExcelRow
+                );
                 ws.range(row, 1, row, 4)
                         .style()
                         .bold()
                         .borderStyle("thin")
                         .set();
 
+
                 row++;
 
-                ws.value(row, 0, "");
                 ws.value(row, 1, "Разом зі знижкою:");
-                ws.value(row, 2, "");
-
-// Показываем пользователю процент
                 ws.value(row, 3, String.format(Locale.US, "%.0f%%", discount));
 
-// Итоговая сумма остается числом
-                ws.value(row, 4, result);
+                ws.formula(
+                        row,
+                        4,
+                        "E" + totalExcelRow + "-E" + discountExcelRow
+                );
 
-// Скрытое числовое значение для формул, например в столбце Z (индекс 25)
                 ws.value(row, 26, discount / 100.0);
 
                 ws.range(row, 1, row, 4)
@@ -880,11 +877,11 @@ public class MainActivity extends AppCompatActivity {
             // Ширина колонок
             // =======================
 
-            ws.width(0, 8);
+            ws.width(0, 6);
             ws.width(1, 45);
-            ws.width(2, 15);
-            ws.width(3, 10);
-            ws.width(4, 18);
+            ws.width(2, 10);
+            ws.width(3, 8);
+            ws.width(4, 15);
 
             wb.finish();
             fos.close();
